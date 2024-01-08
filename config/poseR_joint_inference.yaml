@@ -1,0 +1,44 @@
+work_dir: ./work_dir/poseR82
+run_mode: infer
+
+# feeder
+feeder: feeders.feeder_zeb.Feeder
+infer_feeder_args:
+  data_path: gendata/poseRdata_82/PoseR82.npz
+  split: infer
+  debug: False
+  random_choose: False
+  random_shift: False
+  random_move: False
+  window_size: 78
+  normalization: False
+  random_rot: False
+  p_interval: [0.5, 1]
+  vel: False
+  bone: False
+
+# model
+model: model.zebposemae.ZebPoseMAE
+model_args:
+  len_parts: 6
+  num_frames: 82
+  num_joints: 19
+  num_heads: 3
+  kernel_size: [3, 5]
+  num_fish: 1
+  num_channels: 2
+  use_pes: True
+  # 编码器配置
+  encoder_config: [ [ 64,  64,  16 ], [ 64,  64,  16 ],
+                    [ 64,  128, 32 ], [ 128, 128, 32 ],
+                    [ 128, 256, 64 ], [ 256, 256, 64 ],
+                    [ 256, 256, 64 ], [ 256, 256, 64 ] ]
+  decoder_config: [ [ 256, 256, 64 ], [ 256, 256, 64 ],
+                    [ 256, 256, 64 ], [ 256, 256, 64 ],
+                    [ 256, 128, 32 ], [ 128, 128, 32 ],
+                    [ 128,  64, 16 ], [ 64,  64,  16 ],
+                    [64, 2, 16]]
+
+
+# inferencing
+batch_size: 256

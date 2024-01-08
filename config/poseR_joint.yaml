@@ -1,0 +1,64 @@
+work_dir: ./work_dir/poseR82
+run_mode: train
+
+# feeder
+feeder: feeders.feeder_zeb.Feeder
+train_feeder_args:
+  data_path: gendata/poseRdata_82/PoseR82.npz
+  split: train
+  debug: False
+  random_choose: False
+  random_shift: False
+  random_move: False
+  window_size: 78
+  normalization: False
+  random_rot: False
+  p_interval: [0.5, 1]
+  vel: False
+  bone: False
+
+test_feeder_args:
+  data_path: gendata/poseRdata_82/PoseR82.npz
+  split: test
+  debug: False
+  window_size: 78
+  p_interval: [0.95]
+  vel: False
+  bone: False
+
+# model
+model: model.zebposemae.ZebPoseMAE
+model_args:
+  len_parts: 6
+  num_frames: 82
+  num_joints: 19
+  num_heads: 3
+  kernel_size: [3, 5]
+  num_fish: 1
+  num_channels: 2
+  use_pes: True
+  # 编码器配置
+  encoder_config: [ [ 64,  64,  16 ], [ 64,  64,  16 ],
+                    [ 64,  128, 32 ], [ 128, 128, 32 ],
+                    [ 128, 256, 64 ], [ 256, 256, 64 ],
+                    [ 256, 256, 64 ], [ 256, 256, 64 ] ]
+  decoder_config: [ [ 256, 256, 64 ], [ 256, 256, 64 ],
+                    [ 256, 256, 64 ], [ 256, 256, 64 ],
+                    [ 256, 128, 32 ], [ 128, 128, 32 ],
+                    [ 128,  64, 16 ], [ 64,  64,  16 ],
+                    [64, 2, 16]]
+
+#optim
+weight_decay: 0.0002
+base_lr: 0.001
+lr_decay_rate: 0.5
+step: 40
+warm_up_epoch: 5
+
+# training
+device: [0,1]
+cuda_visible_device: '6,7'
+batch_size: 256
+test_batch_size: 256
+num_epoch: 200
+nesterov: True

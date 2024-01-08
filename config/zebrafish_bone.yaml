@@ -12,7 +12,7 @@ train_feeder_args:
   random_move: False
   window_size: 120
   normalization: False
-  random_rot: True
+  random_rot: False
   p_interval: [0.5, 1]
   vel: False
   bone: False
@@ -50,9 +50,9 @@ model_args:
 
 #optim
 weight_decay: 0.0001
-base_lr: 0.1
+base_lr: 0.002
 lr_decay_rate: 0.1
-step: 700
+step: 500
 warm_up_epoch: 5
 
 # training

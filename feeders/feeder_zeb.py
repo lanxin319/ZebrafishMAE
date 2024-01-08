@@ -60,6 +60,13 @@ class Feeder(Dataset):
         elif self.split == 'test':
             self.data = zeb_data['x_test']
             self.sample_name = ['test_' + str(i) for i in range(len(self.data))]
+        elif self.split == 'infer':
+            X_train = zeb_data['x_train']
+            X_test = zeb_data['x_test']
+            sample_train = ['train_' + str(i) for i in range(len(X_train))]
+            sample_test = ['test_' + str(i) for i in range(len(X_test))]
+            self.data = np.concatenate((X_train, X_test), axis=0)
+            self.sample_name = sample_train + sample_test  # 列表连接
         else:
             raise NotImplementedError('data split only supports train/test')
 
@@ -69,7 +76,8 @@ class Feeder(Dataset):
         # N代表bout数，T代表帧数，第四个数字代表关节数，最后一个数字应该代表channel数
         # 这里的2代表了有两个演员，我只有一个，保留了这个维度，但是改成了1
         # self.data = self.data.reshape((N, T, 2, 25, 3)).transpose(0, 4, 1, 3, 2)
-        self.data = self.data.reshape((N, T, 1, 13, 2)).transpose(0, 4, 1, 3, 2)
+        self.data = self.data.reshape((N, T, 1, 19, 2)).transpose(0, 4, 1, 3, 2)
+
 
     # 如果启用了归一化，这个方法会计算整个数据集的均值和标准差，以便对数据进行归一化处理。
     def get_mean_map(self):
@@ -100,9 +108,9 @@ class Feeder(Dataset):
         # 如果处理骨骼数据，计算骨骼之间的相对位置。
         if self.bone:
             # 每个元组(v1, v2)代表一对关节，其中v1和v2是关节的索引。
-            zeb_pairs = ((1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7),
-                (7, 8), (8, 9), (9, 10), (10, 11), (11, 12), (12, 13),
-                (13, 13))
+            zeb_pairs = ((1, 2), (2, 3), (3, 4), (4, 5), (5, 2), (1, 6), (6, 9), (9, 8),
+                         (8, 7), (7, 6), (4, 10), (8, 10), (10, 11), (11, 12), (12, 13),
+                         (14, 13), (15, 14), (16, 15), (17, 16), (17, 18), (19, 18))
             #  创建一个与原始数据形状相同的空数组，用于存储骨骼数据。
             bone_data_numpy = np.zeros_like(data_numpy)
             # 遍历骨骼点对，计算每对骨骼点之间的相对位置。
